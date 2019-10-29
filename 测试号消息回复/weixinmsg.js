@@ -57,7 +57,34 @@ function userMsg(wxmsg, retmsg) {
 exports.userMsg = userMsg;
 exports.help = help;
 
+function eventMsg(wxmsg,retmsg){
+    // 默认让返回消息类型为文本
+    retmsg.msgtype = 'text';
+    switch (wxmsg.Event) {
+        case 'subscribe':
+            retmsg.msg = '你好，这是一个测试号，尽管没什么用';
+            return formatMsg(retmsg);//将返回信息格式化
+        case 'unsubscribe':
+            console.log(wxmsg.FromUserName,'取消关注');
+            break;
+        case 'VIEW':
+            console.log(wxmsg.EventKey);
+            break;
+        case 'CLICK':
+            retmsg.msg = wxmsg.EventKey;
+            return formatMsg(retmsg);
+        default:
+            return '';
+    }
+    return '';
+}
+
+
+// 后续还会加入事件消息支持
 exports.msgDispatch = function msgDispatch(wxmsg, retmsg) {
+    if(wxmsg.MsgType == 'event'){
+        return eventMsg(wxmsg,retmsg);
+    }
     return userMsg(wxmsg, retmsg);
 };
 
